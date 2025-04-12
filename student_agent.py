@@ -388,7 +388,7 @@ class NTupleNetwork:
             
 env = Game2048Env()
 network = NTupleNetwork()
-network.load_weights("stage1_weights_ep55000_new.pkl")
+network.load_weights("converted_stage1_weights_ep55000_new.pkl")
 class ValueApproximator:
     def __init__(self, network):
         self.network = network
