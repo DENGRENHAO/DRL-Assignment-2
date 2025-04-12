@@ -1,4 +1,5 @@
 # Remember to adjust your student ID in meta.xml
+import gc
 import pickle
 import random
 import gym
@@ -506,10 +507,24 @@ class TD_MCTS:
                 
         return best_action
 
-env, network, approximator, mcts = None, None, None, None
+gc.collect()
+env = Game2048Env()
+network = NTupleNetwork()
+network.load_weights("converted_stage1_weights_ep55000_new.pkl")
+class ValueApproximator:
+    def __init__(self, network):
+        self.network = network
+        
+    def value(self, board):
+        return self.network.evaluate(board, 0)
+
+approximator = ValueApproximator(network)
+mcts = TD_MCTS(env, approximator, iterations=1000, exploration_constant=1.0, rollout_depth=10, gamma=0.99, debug=False)
+
 def init_model():
     global env, network, approximator, mcts
     if mcts is None:
+        gc.collect()
         env = Game2048Env()
         network = NTupleNetwork()
         network.load_weights("converted_stage1_weights_ep55000_new.pkl")
