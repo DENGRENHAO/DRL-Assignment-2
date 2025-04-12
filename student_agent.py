@@ -378,25 +378,14 @@ class NTupleNetwork:
             pickle.dump(serializable_weights, f)
 
     def load_weights(self, filename):
+        print(f"Loading weights from {filename}...")
         serializable_weights = joblib.load(filename)
         # with open(f"{filename}", "rb") as f:
         #     serializable_weights = pickle.load(f)
         for i, stage_weights in enumerate(serializable_weights):
             self.weights[i] = defaultdict(float, stage_weights)
         
-        print(f"Loaded weights from {filename}")
-            
-env = Game2048Env()
-network = NTupleNetwork()
-network.load_weights("converted_stage1_weights_ep55000_new.pkl")
-class ValueApproximator:
-    def __init__(self, network):
-        self.network = network
-        
-    def value(self, board):
-        return self.network.evaluate(board, 0)
-
-approximator = ValueApproximator(network)
+        print(f"Loaded weights from {filename} successfully.")
 
 class TD_MCTS_Node:
     def __init__(self, state, score, parent=None, action=None):
@@ -517,9 +506,26 @@ class TD_MCTS:
                 
         return best_action
 
-mcts = TD_MCTS(env, approximator, iterations=1000, exploration_constant=1.0, rollout_depth=10, gamma=0.99, debug=False)
+env, network, approximator, mcts = None, None, None, None
+def init_model():
+    global env, network, approximator, mcts
+    if mcts is None:
+        env = Game2048Env()
+        network = NTupleNetwork()
+        network.load_weights("converted_stage1_weights_ep55000_new.pkl")
+        class ValueApproximator:
+            def __init__(self, network):
+                self.network = network
+                
+            def value(self, board):
+                return self.network.evaluate(board, 0)
+
+        approximator = ValueApproximator(network)
+        mcts = TD_MCTS(env, approximator, iterations=1000, exploration_constant=1.0, rollout_depth=10, gamma=0.99, debug=False)
 
 def get_action(state, score):
+    print("1")
+    init_model()
     global env, mcts
     env.board = state.copy()
     env.score = score
