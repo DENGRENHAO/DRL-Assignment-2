@@ -539,7 +539,6 @@ def init_model():
         mcts = TD_MCTS(env, approximator, iterations=1000, exploration_constant=1.0, rollout_depth=10, gamma=0.99, debug=False)
 
 def get_action(state, score):
-    print("1")
     init_model()
     global env, mcts
     env.board = state.copy()
@@ -551,8 +550,6 @@ def get_action(state, score):
         mcts.run_simulation(root)
     
     best_action = mcts.best_action(root)
-    
-    print(f"Best action: {best_action}")
     
     return best_action
 
