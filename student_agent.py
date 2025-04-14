@@ -519,7 +519,7 @@ class ValueApproximator:
         return self.network.evaluate(board, 0)
 
 approximator = ValueApproximator(network)
-mcts = TD_MCTS(env, approximator, iterations=1000, exploration_constant=1.0, rollout_depth=10, gamma=0.99, debug=False)
+mcts = TD_MCTS(env, approximator, iterations=200, exploration_constant=1.0, rollout_depth=5, gamma=0.99, debug=False)
 
 def init_model():
     global env, network, approximator, mcts
@@ -562,7 +562,7 @@ def has_tiles(board, tile_logs):
     return all(has_tile(board, tile_log) for tile_log in tile_logs)
 
 
-def val1(state, score, action, depth=2):
+def val(state, score, action, depth=2):
     global env
     env.board = state.copy()
     env.score = score
@@ -610,24 +610,6 @@ def val1(state, score, action, depth=2):
 mcts.iterations = 1
 mcts.rollout_depth = 1
 
-def val2(board, score):
-    global env
-    env.board = board.copy()
-    env.score = score
-    
-    legal_actions = [a for a in range(4) if env.is_move_legal(a)]
-    if not legal_actions:
-        return 0
-    
-    best_value = float('-inf')
-    
-    for action in legal_actions:
-        value = val1(board, score, action, depth=1)
-        if value > best_value:
-            best_value = value
-    
-    return best_value
-
 def end(node):
     env = Game2048Env()
     env.board = node.state.copy()
@@ -636,7 +618,7 @@ def end(node):
     for action in legal_actions:
         _, next_state, reward, done, _ = env.simulate_step(action)
         child_node = TD_MCTS_Node(next_state, env.score+reward, parent=node, action=action)
-        child_node.visits = val1(node.state, node.score, action)
+        child_node.visits = val(node.state, node.score, action)
         node.children[action] = child_node
 
 def next_val(board, score):

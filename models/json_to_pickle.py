@@ -1,4 +1,4 @@
-# conda activate python310
+# conda activate python38
 import json
 import pickle
 from collections import defaultdict
@@ -16,7 +16,8 @@ def deserialize_weights(json_weights):
         for key_str, value in stage_weights.items():
             # Split string back to tuple
             parts = key_str.split("::")
-            restored[(parts[0], int(parts[1]))] = value
+            restored[(int(parts[0][7]), int(parts[1]))] = value
+            # restored[(parts[0], int(parts[1]))] = value
         result.append(defaultdict(float, restored))
     return result
 
