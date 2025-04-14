@@ -133,7 +133,7 @@ class NTupleNetwork:
         
         for i, pattern_pos in enumerate(self.all_patterns):
             index = self.get_tuple_index(board, pattern_pos)
-            values.append(self.weights[stage][(f"pattern{i//self.symmetric_pattern_cnt}", index)])
+            values.append(self.weights[stage][(i//self.symmetric_pattern_cnt, index)])
         
         # Add large-tile feature weight
         # large_index = self.get_large_tile_index(board)
@@ -154,7 +154,7 @@ class NTupleNetwork:
         for i, pattern_pos in enumerate(self.all_patterns):
             index = self.get_tuple_index(board, pattern_pos)
             # print(f"Before Update: {self.weights[stage][(f'pattern{i//self.symmetric_pattern_cnt}', index)]}")
-            self.weights[stage][(f"pattern{i//self.symmetric_pattern_cnt}", index)] += alpha * td_error / len(self.all_patterns)
+            self.weights[stage][(i//self.symmetric_pattern_cnt, index)] += alpha * td_error / len(self.all_patterns)
             # print(f"After Update: {self.weights[stage][(f'pattern{i//self.symmetric_pattern_cnt}', index)]}")
         
         # Update large-tile feature weight
@@ -164,7 +164,7 @@ class NTupleNetwork:
         
         return td_error
     
-    # self.weights[stage][(f"pattern{n}", index)] = weight
+    # self.weights[stage][({n}", idex)] = weit
     def save_weights(self, filename):
         """Save the network weights to a file"""
         serializable_weights = []
