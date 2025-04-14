@@ -307,15 +307,6 @@ class NTupleNetwork:
         
         for stage in range(3):
             self.weights[stage] = defaultdict(lambda: init_value)
-    
-    def _print_all_patterns(self):
-        for i, pattern in enumerate(self.all_patterns):
-            if i % self.symmetric_pattern_cnt == 0:
-                print(f"Pattern {i // self.symmetric_pattern_cnt + 1}")
-            grid = np.zeros((4, 4), dtype=int)
-            for x, y in pattern:
-                grid[x, y] = 1
-            print(grid)
         
     def _generate_all_patterns(self):
         def rot90(pattern):
@@ -356,7 +347,7 @@ class NTupleNetwork:
         
         for i, pattern_pos in enumerate(self.all_patterns):
             index = self.get_tuple_index(board, pattern_pos)
-            values.append(self.weights[stage][(f"pattern{i//self.symmetric_pattern_cnt}", index)])
+            values.append(self.weights[stage][(i//self.symmetric_pattern_cnt, index)])
         
         return np.sum(values)
     
@@ -366,7 +357,7 @@ class NTupleNetwork:
 
         for i, pattern_pos in enumerate(self.all_patterns):
             index = self.get_tuple_index(board, pattern_pos)
-            self.weights[stage][f"pattern{i//self.symmetric_pattern_cnt}", index] += alpha * td_error / len(self.base_patterns)
+            self.weights[stage][i//self.symmetric_pattern_cnt, index] += alpha * td_error / len(self.base_patterns)
         
         return td_error
     
@@ -583,7 +574,6 @@ def val(state, score, action, depth=2):
         prob_2 = 0.9 / len(empty_cells)
         
         if depth > 1:
-            # best_value_2 = val2(board_with_2, score + reward)
             best_value_2 = next_val(board_with_2, score + reward)
         else:
             best_value_2 = next_val(board_with_2, score + reward)
@@ -595,7 +585,6 @@ def val(state, score, action, depth=2):
         prob_4 = 0.1 / len(empty_cells)        
         
         if depth > 1:
-            # best_value_4 = val2(board_with_4, score + reward)
             best_value_4 = next_val(board_with_4, score + reward)
         else:
             best_value_4 = next_val(board_with_4, score + reward)

@@ -31,7 +31,7 @@ jobs:
 
     - name: 2.5. Download file from Google Drive
       run: |
-        gdown 'https://drive.google.com/uc?id=1SfniZsuYWeAXg1wJ-X-M6oFyrywcxx6p&export=download'
+        gdown 'https://drive.google.com/uc?id=1n61CU7jnIjyqOuLEjh-KP6YVboMgsZWN&export=download'
 
     - name: 3. Ensure env.so is executable
       run: chmod +x env.cpython-38-x86_64-linux-gnu.so
